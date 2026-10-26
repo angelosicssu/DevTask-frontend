@@ -27,6 +27,12 @@ function App() {
     setIsVisible(false);
   }
 
+  function handleToggleTask(id: number) {
+    setTasks((currentTasks) => 
+      currentTasks.map((task) => task.id === id ? {...task, completed: !task.completed} : task)
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#0B0F19] text-slate-100">
       <div className="mx-auto max-w-[1440px] px-5 py-8 sm:px-8 lg:px-12">
@@ -92,7 +98,7 @@ function App() {
 
           <div className="rounded-xl border border-slate-800 bg-[#111827] p-5">
             <p className="text-sm text-slate-400">Em andamento</p>
-            <p className="mt-3 text-3xl font-semibold text-blue-400">4</p>
+            <p className="mt-3 text-3xl font-semibold text-blue-400">{tasks.filter((task) => !task.completed).length}</p>
             <p className="mt-2 text-xs text-slate-500">
               Trabalho em progresso
             </p>
@@ -157,7 +163,7 @@ function App() {
           </div>
 
           {/* List heading */}
-          <TaskList/>
+          <TaskList tasks={tasks} onToggleTask={handleToggleTask}/>
         </section>
       </div>
     </main>
