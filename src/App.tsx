@@ -1,121 +1,166 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useState, type SyntheticEvent } from 'react'
 import './App.css'
+import type { Task } from './types/task';
+import TaskList from './components/TaskList';
+import TaskForm from './components/TaskForm';
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [title, setTitle] = useState('');
+  const [isVisible, setIsVisible] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
+
+  function handleSubmit(event: SyntheticEvent<HTMLFormElement>) { // receives a form
+    event.preventDefault();
+
+    if(!title.trim()) return;
+
+    const newTask: Task = {
+      id: Date.now(),
+      title: title.trim(),
+      completed: false
+    }
+
+    setTasks((currentTasks) => [...currentTasks, newTask]);
+    setTitle('');
+    setIsVisible(false);
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
+    <main className="min-h-screen bg-[#0B0F19] text-slate-100">
+      <div className="mx-auto max-w-[1440px] px-5 py-8 sm:px-8 lg:px-12">
+
+        {/* Header */}
+        <header className="mb-10 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 font-bold text-white">
+              D
+            </div>
+            <div>
+              <h1 className="text-xl font-semibold tracking-tight">
+                DevTask
+              </h1>
+              <p className="text-xs text-slate-500">
+                Workspace pessoal
+              </p>
+            </div>
+          </div>
+
+          <div className="hidden items-center gap-3 sm:flex">
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <span className="text-sm text-slate-400">
+              Task management
+            </span>
+          </div>
+        </header>
+
+        {/* Page heading */}
+        <section className="mb-8">
+          <p className="mb-2 text-sm font-medium text-blue-400">
+            WORKSPACE / TASKS
           </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+                Minhas tarefas
+              </h2>
+              <p className="mt-2 text-sm text-slate-400">
+                Organize seu trabalho e acompanhe seu progresso.
+              </p>
+            </div>
 
-      <div className="ticks"></div>
+            <button
+              type="button"
+              className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-500"
+              onClick={() => setIsVisible(true)}
+            >
+              + Nova tarefa
+            </button>
+          </div>
+        </section>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {/* Statistics */}
+        <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border border-slate-800 bg-[#111827] p-5">
+            <p className="text-sm text-slate-400">Total de tarefas</p>
+            <p className="mt-3 text-3xl font-semibold">{tasks.length}</p>
+            <p className="mt-2 text-xs text-slate-500">
+              Tarefas no workspace
+            </p>
+          </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+          <div className="rounded-xl border border-slate-800 bg-[#111827] p-5">
+            <p className="text-sm text-slate-400">Em andamento</p>
+            <p className="mt-3 text-3xl font-semibold text-blue-400">4</p>
+            <p className="mt-2 text-xs text-slate-500">
+              Trabalho em progresso
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-slate-800 bg-[#111827] p-5">
+            <p className="text-sm text-slate-400">Concluídas</p>
+            <p className="mt-3 text-3xl font-semibold text-emerald-400">{tasks.filter((task) => task.completed).length}</p>
+            <p className="mt-2 text-xs text-slate-500">
+              Tarefas finalizadas
+            </p>
+          </div>
+        </section>
+
+        {isVisible && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-sm">
+            <TaskForm
+              title={title}
+              onTitleChange={setTitle}
+              onSubmit={handleSubmit}
+              onCancel={() => setIsVisible(false)}
+            />
+          </div>
+        )}
+        
+
+        {/* Task workspace */}
+        <section className="overflow-hidden rounded-xl border border-slate-800 bg-[#111827]">
+
+          {/* Toolbar */}
+          <div className="flex flex-col gap-4 border-b border-slate-800 p-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-white"
+              >
+                ☰ Lista
+              </button>
+
+              <button
+                type="button"
+                className="rounded-lg px-3 py-2 text-sm text-slate-400 transition hover:bg-slate-800 hover:text-white"
+              >
+                ▦ Kanban
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                type="text"
+                placeholder="Buscar tarefas..."
+                className="w-full rounded-lg border border-slate-700 bg-[#0B0F19] px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-blue-500 sm:w-56"
+              />
+
+              <button
+                type="button"
+                className="rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800"
+              >
+                Todos os status
+              </button>
+            </div>
+          </div>
+
+          {/* List heading */}
+          <TaskList/>
+        </section>
+      </div>
+    </main>
   )
 }
 
